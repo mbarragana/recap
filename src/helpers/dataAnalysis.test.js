@@ -1,18 +1,19 @@
 import { getMaximumDrawdown } from "./dataAnalysis"
 
-import { dataSeries_1, dataSeries_2 } from '../__mockData__/dataSeries';
-import { dataToObject } from "./dataToObject";
+import { dataSeries_2, dataSeries_3 } from '../__mockData__/dataSeries';
 
 describe('dataAnalysis', () => {
-  test('getMaximumDrawdown', () => {
-    expect(getMaximumDrawdown(dataSeries_1)).toBe(33.04);
-  })
-
-  test.only('getMaximumDrawdown 2', () => {
-    console.log('>>>>>>>', dataSeries_2.map(data => ({ open: data[8], close: data[11] })))
+  test('getMaximumDrawdown 2', () => {
     expect(getMaximumDrawdown(dataSeries_2)).toEqual({
       peak: 185.61,
-      through: -12.32
+      diff: -12.32
+    });
+  });
+
+  test('getMaximumDrawdown 3', () => {
+    expect(getMaximumDrawdown(dataSeries_3)).toEqual({
+      peak: 186.01,
+      diff: -14.69
     });
   })
 })

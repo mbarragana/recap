@@ -1,5 +1,5 @@
 import 'dayjs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import { makeStyles } from '@material-ui/core/styles';
 
 import DatePicker from './components/DatePicker';
+import { getStockTimeSeries } from './api';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,35 +24,50 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const maxDate = dayjs().subtract(1,'day');
-
-const initialState = {
-  start_date: maxDate.subtract(1, 'month'),
-  end_date: maxDate,
+const DATE_FORMAT = 'YYYY/MM/DD';
+const maxDate = dayjs(new Date('2018-03-27T00:00:00'));
+const initialQuery = {
+  startDate: maxDate.subtract(1, 'month').format(),
+  endDate: maxDate.format(),
 };
+
+function toObjectQuery(query) {
+  return {
+    start_date: dayjs(query.startDate).format(DATE_FORMAT),
+    end_date: dayjs(query.endDate).format(DATE_FORMAT),
+  }
+}
 
 const App = () => {
   const classes = useStyles();
-  const [state, setState] = useState(initialState);
+  const [ticker, setTicker] = useState();
+  const [query, setQuery] = useState(initialQuery);
+  const [timeSeries, setTimeSeries] = useState();
 
-  function handleChange(attr, value) {
-    setState({
-      ...state,
-      [attr]: value,
-    })
-  }
+  function handleDateRangeChange(attr, value) {
+    const newQuery = { ...query, [attr]: value };
 
-  function handleStartDateChange(value) {
-    const nextState = { ...state };
-
-    const formatted = value.format();
-    if (value.isAfter(dayjs(state.end_date))) {
-      nextState.end_date = formatted;
+    if (dayjs(newQuery.startDate).isAfter(dayjs(newQuery.endDate))) {
+      newQuery.endDate = newQuery.startDate
     }
-
-    nextState.start_date = formatted;
-    setState(nextState);
+    
+    setQuery(newQuery);
   }
+
+  function handleTickerChange(value) {
+    setTicker(value);
+  }
+
+  useEffect(() => {
+    async function triggerGetStockTimeSeries() {
+      const tm = await getStockTimeSeries(ticker, toObjectQuery(query));
+      setTimeSeries(tm);
+    };
+
+    if(ticker && query.startDate && query.endDate) {
+      triggerGetStockTimeSeries();
+    }
+  }, [ticker, query])
 
   return (
     <Container className={classes.root} component="main" maxWidth="lg">
@@ -61,19 +77,18 @@ const App = () => {
             <Autocomplete
               id="ticker"
               fullWidth
-              options={['FB', 'APPL']}
+              options={['FB', 'AAPL']}
               getOptionLabel={(option) => option}
               renderInput={(props) => <TextField {...props} label="Ticker" />}
-              value={state.ticker}
-              onChange={value => handleChange('ticker', value)}
+              onChange={({ target }) => handleTickerChange(target.textContent)}
             />
           </Grid>
           <Grid item xs={4}>
             <DatePicker
               fullWidth
               label="Start Date"
-              value={state.start_date}
-              onChange={handleStartDateChange}
+              value={query.startDate}
+              onChange={value => handleDateRangeChange('startDate', value.format())}
               InputLabelProps={{
                 shrink: true,
               }}
@@ -85,13 +100,13 @@ const App = () => {
             <DatePicker
               fullWidth
               label="End Date"
-              value={state.end_date}
-              onChange={value => handleChange('end_date', value.format())}
+              value={query.endDate}
+              onChange={value => handleDateRangeChange('endDate', value.format())}
               InputLabelProps={{
                 shrink: true,
               }}
-              disabled={!state.start_date}
-              minDate={state.start_date}
+              disabled={!query.startDate}
+              minDate={query.startDate}
               maxDate={maxDate}
               format="DD/MM/YYYY"
             />

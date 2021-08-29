@@ -17,7 +17,7 @@ const useStyles = makeStyles(({ palette }) => ({
   },
 }));
 
-const MaxDrawdown = ({ timeSeries }) => {
+function MaxDrawdown({ timeSeries }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [maxDrawdown, setMaxDrawdown] = useState();
   const classes = useStyles(maxDrawdown);

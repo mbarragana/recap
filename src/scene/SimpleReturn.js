@@ -17,7 +17,7 @@ const useStyles = makeStyles(({ palette }) => ({
   },
 }));
 
-const SimpleReturn = ({ timeSeries }) => {
+function SimpleReturn({ timeSeries }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [simpleReturn, setSimpleReturn] = useState();
 

@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 import { dataToObject } from "./dataToObject";
 
 export function getMaximumDrawdownData(dataSeries) {
@@ -44,7 +45,16 @@ export function getSimpleReturn(dataSeries) {
   return new Promise((resolve) => {
     const { open } = dataToObject(dataSeries[0]);
     const { close } = dataToObject(dataSeries[dataSeries.length - 1]);
-    console.log('>>>>>> open: %s, close: %s', open, close);
     resolve(Number(((close - open) / open).toFixed(2) * 100));
+  });
+}
+
+export function getDataSeries(timeSeries) {
+  return new Promise((resolve) => {
+    const dataSeries = timeSeries.map(data => {
+      const { open, close, high, low } = dataToObject(data);
+      return [dayjs(data[0]).format('DD/MM/YYYY'), open, high, low, close] ;
+    });
+    resolve(dataSeries);
   });
 }

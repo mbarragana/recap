@@ -15,6 +15,7 @@ import { getStockTimeSeries } from './api';
 import Notification from './components/Notification';
 import SimpleReturn from './scene/SimpleReturn';
 import MaxDrawdown from './scene/MaxDrawdown';
+import LineChart from './scene/LineChart';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -152,7 +153,9 @@ const App = () => {
             </Paper>
           </Grid>
           <Grid item xs={12}>
-            <Paper className={classes.paper}>xs=6</Paper>
+            <Paper className={classes.paper}>
+              <LineChart timeSeries={timeSeries.data} />
+            </Paper>
           </Grid>
         </Grid>
       </form>

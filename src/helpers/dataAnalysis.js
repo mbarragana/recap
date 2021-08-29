@@ -45,7 +45,7 @@ export function getSimpleReturn(dataSeries) {
   return new Promise((resolve) => {
     const { open } = dataToObject(dataSeries[0]);
     const { close } = dataToObject(dataSeries[dataSeries.length - 1]);
-    resolve(Number(((close - open) / open).toFixed(2) * 100));
+    resolve(Number(((close - open) / open * 100).toFixed(2)));
   });
 }
 

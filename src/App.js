@@ -17,6 +17,8 @@ import SimpleReturn from './scene/SimpleReturn';
 import MaxDrawdown from './scene/MaxDrawdown';
 import LineChart from './scene/LineChart';
 
+import stockSymbols from './data/stock_symbols.json';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(8),
@@ -70,6 +72,7 @@ const App = () => {
 
   function handleTickerChange(value) {
     setTicker(value);
+    setMinDate();
   }
 
   useEffect(() => {
@@ -79,10 +82,12 @@ const App = () => {
       setIsLoadingTS(false);
     };
 
-    if(ticker && query.startDate && query.endDate) {
+
+    if(!showNotification && ticker && query.startDate && query.endDate) {
       setIsLoadingTS(true);
       triggerGetStockTimeSeries();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ticker, query]);
 
   useEffect(() => {
@@ -108,7 +113,7 @@ const App = () => {
             <Autocomplete
               id="ticker"
               fullWidth
-              options={['FB', 'AAPL']}
+              options={stockSymbols}
               getOptionLabel={(option) => option}
               renderInput={(props) => <TextField {...props} label="Ticker" />}
               onChange={({ target }) => handleTickerChange(target.textContent)}

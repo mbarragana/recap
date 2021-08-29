@@ -34,12 +34,17 @@ export function getMaximumDrawdownData(dataSeries) {
 }
 
 export function getMaximumDrawdown(dataSeries) {
-  const { peak, mdd } = getMaximumDrawdownData(dataSeries);
-  return Number((mdd / peak * 100).toFixed(2))
+  return new Promise((resolve) => {
+    const { peak, mdd } = getMaximumDrawdownData(dataSeries);
+    resolve(Number((mdd / peak * 100).toFixed(2)));
+  });
 }
 
 export function getSimpleReturn(dataSeries) {
-  const { open } = dataToObject(dataSeries[0]);
-  const { close } = dataToObject(dataSeries[dataSeries.length - 1]);
-  return (close - open) / open;
+  return new Promise((resolve) => {
+    const { open } = dataToObject(dataSeries[0]);
+    const { close } = dataToObject(dataSeries[dataSeries.length - 1]);
+    console.log('>>>>>> open: %s, close: %s', open, close);
+    resolve(Number(((close - open) / open).toFixed(2) * 100));
+  });
 }

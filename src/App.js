@@ -54,7 +54,8 @@ const App = () => {
   const [query, setQuery] = useState(initialQuery);
   const [timeSeries, setTimeSeries] = useState({});
   const [isLoadingTS, setIsLoadingTS] = useState(false);
-  const [minDateWarning, setMinDateWarning] = useState();
+  const [minDate, setMinDate] = useState();
+  const [showNotification, setShowNotification] = useState(false);
 
   function handleDateRangeChange(attr, value) {
     const newQuery = { ...query, [attr]: value };
@@ -88,12 +89,12 @@ const App = () => {
     const { startDate, endDate } = query;
 
     if (minDate && dayjs(startDate).isBefore(dayjs(minDate))) {
-      const dMinDate = dayjs(minDate)
-      setMinDateWarning(dMinDate.format('MMMM D, YYYY'));
-      setQuery({
-        startDate: dMinDate.format(),
-        endDate,
-      });
+      const dMinDate = dayjs(minDate);
+      const formatted = dMinDate.format();
+
+      setMinDate(formatted);
+      setQuery({ startDate: formatted, endDate });
+      setShowNotification(true);
     }
   }, [timeSeries, query])
 
@@ -155,8 +156,12 @@ const App = () => {
           </Grid>
         </Grid>
       </form>
-      <Notification severity="warning" show={!!minDateWarning}>
-        The oldest available date for this stock is {minDateWarning}.
+      <Notification
+        severity="warning"
+        show={showNotification}
+        onClose={() => setShowNotification(false)}
+      >
+        The oldest available date for this stock is {dayjs(minDate).format('MMMM D, YYYY')}.
       </Notification>
     </Container>  
   );

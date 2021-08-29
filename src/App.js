@@ -1,23 +1,26 @@
 import 'dayjs';
 import { useState, useEffect } from 'react';
+import dayjs from 'dayjs';
 import Container from '@material-ui/core/Container';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete'
 import LinearProgress from '@material-ui/core/LinearProgress';
-import dayjs from 'dayjs';
 
 import { makeStyles } from '@material-ui/core/styles';
+
+import stockSymbols from './data/stock_symbols.json';
 
 import DatePicker from './components/DatePicker';
 import { getStockTimeSeries } from './api';
 import Notification from './components/Notification';
-import SimpleReturn from './scene/SimpleReturn';
-import MaxDrawdown from './scene/MaxDrawdown';
 import LineChart from './scene/LineChart';
+import DataAnalysis from './scene/DataAnalysis';
 
-import stockSymbols from './data/stock_symbols.json';
+import { getMaximumDrawdown, getSimpleReturn } from './helpers/dataAnalysis';
+import { toObjectQuery } from './helpers/dataToObject';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,19 +40,11 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const DATE_FORMAT = 'YYYY/MM/DD';
 const maxDate = dayjs(new Date('2018-03-27T00:00:00'));
 const initialQuery = {
   startDate: maxDate.subtract(1, 'month').format(),
   endDate: maxDate.format(),
 };
-
-function toObjectQuery(query) {
-  return {
-    start_date: dayjs(query.startDate).format(DATE_FORMAT),
-    end_date: dayjs(query.endDate).format(DATE_FORMAT),
-  }
-}
 
 const App = () => {
   const classes = useStyles();
@@ -149,12 +144,18 @@ const App = () => {
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper}>
-              <SimpleReturn timeSeries={timeSeries.data} />
+              <DataAnalysis
+                timeSeries={timeSeries.data}
+                getDataAnalysisValue={getSimpleReturn}
+              />
             </Paper>
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper}>
-              <MaxDrawdown timeSeries={timeSeries.data} />
+              <DataAnalysis
+                timeSeries={timeSeries.data}
+                getDataAnalysisValue={getMaximumDrawdown}
+              />
             </Paper>
           </Grid>
           <Grid item xs={12}>

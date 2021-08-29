@@ -95,6 +95,7 @@ function DataView({
               <DataAnalysis
                 timeSeries={data}
                 getDataAnalysisValue={getSimpleReturn}
+                label="Simple Return"
               />
             </Paper>
           </Grid>
@@ -103,6 +104,7 @@ function DataView({
               <DataAnalysis
                 timeSeries={data}
                 getDataAnalysisValue={getMaximumDrawdown}
+                label="Maximum Drawdown"
               />
             </Paper>
           </Grid>

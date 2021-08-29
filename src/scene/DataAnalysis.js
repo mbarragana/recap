@@ -15,7 +15,7 @@ const useStyles = makeStyles(({ palette }) => ({
   },
 }));
 
-function DataAnalysis({ timeSeries, getDataAnalysisValue }) {
+function DataAnalysis({ timeSeries, getDataAnalysisValue, label }) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [value, setValue] = useState();
   const classes = useStyles(value);
@@ -36,7 +36,7 @@ function DataAnalysis({ timeSeries, getDataAnalysisValue }) {
   return (
     <Container>
       <Typography variant="h5" gutterBottom>
-        Maximum Drawdown
+        {label}
       </Typography>
       <Box display="flex" justifyContent="center" alignItems="center" height="70px">
         {isProcessing && (<CircularProgress />)}
